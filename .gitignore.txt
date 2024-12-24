@@ -1,0 +1,25 @@
+# Virtual environment
+venv/
+
+# Python specific files
+*.pyc
+__pycache__/
+
+# Environment files
+.env
+config.py
+
+# Database and temporary files
+*.db
+instance/
+logs/
+*.log
+*.tmp
+
+# IDE/project-specific files
+*.swp
+*.swo
+.DS_Store
+
+# Python cache and build files
+*.pyo
