@@ -1,55 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Chef and Branch List</title>
-    <script>
-        function fetchChefs() {
-            fetch('/get-chefs')
-                .then(response => response.json())
-                .then(data => {
-                    let output = "<table border='1'><tr><th>SSN</th><th>Name</th><th>Join Date</th><th>Specialty Cuisine</th></tr>";
-                    data.forEach(chef => {
-                        output += `<tr>
-                            <td>${chef.ssn}</td>
-                            <td>${chef.name}</td>
-                            <td>${chef.join_date}</td>
-                            <td>${chef.specialty_cuisine}</td>
-                        </tr>`;
-                    });
-                    output += "</table>";
-                    document.getElementById("chef-list").innerHTML = output;
-                })
-                .catch(error => console.error('Error:', error));
-        }
-
-        function getBranch() {
-            fetch('/get-branches')
-                .then(response => response.json())
-                .then(data => {
-                    let output = "<table border='1'><tr><th>Branch ID</th><th>Name</th><th>City</th><th>State</th><th>Start Date</th><th>Planned Revenue</th><th>Planned Expenditure</th></tr>";
-                    data.forEach(branch => {
-                        output += `<tr>
-                            <td>${branch.branch_id}</td>
-                            <td>${branch.name}</td>
-                            <td>${branch.city}</td>
-                            <td>${branch.state}</td>
-                            <td>${branch.start_date}</td>
-                            <td>${branch.planned_revenue || 'N/A'}</td>
-                            <td>${branch.planned_expenditure || 'N/A'}</td>
-                        </tr>`;
-                    });
-                    output += "</table>";
-                    document.getElementById("branch-list").innerHTML = output;
-                })
-                .catch(error => console.error('Error:', error));
-        }
-    </script>
+    <title>Zenith Hotels</title>
+    <script src="script.js"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <button onclick="fetchChefs()">Click to Get Chef List</button>
+    <!-- <button onclick="fetchChefs()">Click to Get Chef List</button>
     <div id="chef-list"></div>
     
     <button onclick="getBranch()">Click to Get Branch List</button>
-    <div id="branch-list"></div>
+    <div id="branch-list"></div> -->
+    <header class="header">
+        <a href="#" class="logo"><span>Ze</span>nith</a>
+        <nav class="navbar"> 
+            <a href="#home">Home</a>
+            <a href="chef.html">Chefs</a> 
+            <a href="#branches">Branches</a>
+            <a href="#menu">Menu</a>
+    </nav>
+    </header>
+    
+    </section>       
 </body>
 </html>

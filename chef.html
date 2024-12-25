@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Chefs</title>
+    <link rel="stylesheet" href="chefcss.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+</head>
+<body>
+    <header>
+        <h1>Manage Chefs</h1>
+    </header>
+    
+    <section>
+        <h2>View Chefs</h2>
+        <label for="branch-dropdown">Select Branch:</label>
+        <select id="branch-dropdown">
+            <option value="">-- Select Branch --</option>
+            <option value="1">Luxury Stay</option>
+            <option value="2">Cozy Retreat</option>
+            <option value="3">Urban Comfort</option>
+        </select>
+        
+        <button id="view-chefs-btn">View Chefs</button>
+
+        <div id="chef-table">
+            <!-- Chef table will be dynamically populated here -->
+        </div>
+    </section>
+
+    <section>
+        <h2>Add/Edit Chef</h2>
+        <form id="chef-form">
+            <input type="hidden" id="chef-ssn" name="ssn">
+            <label for="chef-name">Name:</label>
+            <input type="text" id="chef-name" name="name" required><br>
+
+            <label for="chef-join-date">Join Date:</label>
+            <input type="date" id="chef-join-date" name="join_date" required><br>
+
+            <label for="chef-specialty">Specialty Cuisine:</label>
+            <input type="text" id="chef-specialty" name="specialty_cuisine" required><br>
+
+            <button type="submit" id="save-chef-btn">Save Chef</button>
+        </form>
+    </section>
+
+    <script>
+        document.getElementById('view-chefs-btn').addEventListener('click', fetchChefs);
+
+        function fetchChefs() {
+            // Get the selected branch ID
+            const branchId = document.getElementById('branch-dropdown').value;
+
+            // Fetch the data from the server
+            fetch(`http://127.0.0.1:5000/get-chefs?branch_id=${branchId}`)
+                .then(response => response.json())
+                .then(data => {
+                    let output = "<table border='1'><tr><th>SSN</th><th>Name</th><th>Join Date</th><th>Specialty Cuisine</th></tr>";
+                    data.forEach(chef => {
+                        output += `<tr>
+                            <td>${chef.ssn}</td>
+                            <td>${chef.name}</td>
+                            <td>${chef.join_date}</td>
+                            <td>${chef.specialty_cuisine}</td>
+                        </tr>`;
+                    });
+                    output += "</table>";
+                    document.getElementById("chef-table").innerHTML = output;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
