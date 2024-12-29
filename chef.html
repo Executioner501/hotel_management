@@ -11,67 +11,124 @@
 <body>
     <header>
         <h1>Manage Chefs</h1>
+        <div class="hbar">
+        <a href="index.html">Home </a>
+        </div>
     </header>
     
     <section>
-        <h2>View Chefs</h2>
-        <label for="branch-dropdown">Select Branch:</label>
-        <select id="branch-dropdown">
-            <option value="">-- Select Branch --</option>
-            <option value="1">Luxury Stay</option>
-            <option value="2">Cozy Retreat</option>
-            <option value="3">Urban Comfort</option>
-        </select>
         
-        <button id="view-chefs-btn">View Chefs</button>
-
-        <div id="chef-table">
-            <!-- Chef table will be dynamically populated here -->
-        </div>
+    
+    <section>
+        <h2>View All Chefs</h2>
+        <button id="view-all-chefs-btn">View All Chefs</button>
+        <div id="chef-table-container"></div> <!-- Table will be inserted here -->
     </section>
 
     <section>
-        <h2>Add/Edit Chef</h2>
+        <h2>Add Chef</h2>
         <form id="chef-form">
-            <input type="hidden" id="chef-ssn" name="ssn">
+            <label for="chef-ssn">SSN</label>
+            <input id="chef-ssn" name="ssn" required autocomplete="off">
             <label for="chef-name">Name:</label>
-            <input type="text" id="chef-name" name="name" required><br>
-
+            <input type="text" id="chef-name" name="name" required autocomplete="off"><br>
+    
             <label for="chef-join-date">Join Date:</label>
-            <input type="date" id="chef-join-date" name="join_date" required><br>
-
+            <input type="date" id="chef-join-date" name="join_date" required autocomplete="off"><br>
+    
             <label for="chef-specialty">Specialty Cuisine:</label>
-            <input type="text" id="chef-specialty" name="specialty_cuisine" required><br>
-
+            <input type="text" id="chef-specialty" name="specialty_cuisine" required autocomplete="off"><br>
+    
             <button type="submit" id="save-chef-btn">Save Chef</button>
         </form>
+        <p id="add-chef-message"></p> <!-- Display success or error message -->
     </section>
-
+    
+    
     <script>
-        document.getElementById('view-chefs-btn').addEventListener('click', fetchChefs);
-
-        function fetchChefs() {
-            // Get the selected branch ID
-            const branchId = document.getElementById('branch-dropdown').value;
-
-            // Fetch the data from the server
-            fetch(`http://127.0.0.1:5000/get-chefs?branch_id=${branchId}`)
+        // Function to fetch and display all chefs
+        function fetchAllChefs() {
+            fetch('http://127.0.0.1:5000/get-chefs') // Fetch all chefs from the server
                 .then(response => response.json())
                 .then(data => {
-                    let output = "<table border='1'><tr><th>SSN</th><th>Name</th><th>Join Date</th><th>Specialty Cuisine</th></tr>";
+                    let output = `
+                        <table border="1">
+                            <thead>
+                                <tr>
+                                    <th>SSN</th>
+                                    <th>Name</th>
+                                    <th>Join Date</th>
+                                    <th>Specialty Cuisine</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+
                     data.forEach(chef => {
-                        output += `<tr>
-                            <td>${chef.ssn}</td>
-                            <td>${chef.name}</td>
-                            <td>${chef.join_date}</td>
-                            <td>${chef.specialty_cuisine}</td>
-                        </tr>`;
+                        output += `
+                            <tr>
+                                <td>${chef.ssn}</td>
+                                <td>${chef.name}</td>
+                                <td>${chef.join_date}</td>
+                                <td>${chef.specialty_cuisine}</td>
+                            </tr>
+                        `;
                     });
-                    output += "</table>";
-                    document.getElementById("chef-table").innerHTML = output;
+
+                    output += `
+                            </tbody>
+                        </table>
+                    `;
+                    
+                    document.getElementById('chef-table-container').innerHTML = output;
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('chef-table-container').innerHTML = '<p>Error fetching data.</p>';
+                });
         }
+
+        // Event listener for "View All Chefs" button
+        document.getElementById('view-all-chefs-btn').addEventListener('click', fetchAllChefs);
+        function addChef() {
+            // Prevent default form submission
+            const form = document.getElementById('chef-form');
+            form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Get form data
+            const ssn = document.getElementById('chef-ssn').value;
+            const name = document.getElementById('chef-name').value;
+            const joinDate = document.getElementById('chef-join-date').value;
+            const specialtyCuisine = document.getElementById('chef-specialty').value;
+
+            // Make the POST request to add the chef
+            fetch('http://127.0.0.1:5000/add-chef', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ssn, name, join_date: joinDate, specialty_cuisine: specialtyCuisine })
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Failed to add chef");
+            return response.json();
+        })
+        .then(data => {
+            // Display success message
+            document.getElementById('add-chef-message').textContent = data.message || "Chef added successfully!";
+            form.reset(); // Clear the form
+
+            // Optionally, refresh the chef table
+            fetchAllChefs(); // Ensure this function exists in your script
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('add-chef-message').textContent = 'Error adding chef.';
+        });
+    });
+}
+document.getElementById('save-chef-btn').addEventListener('click', addChef);
+
     </script>
+    
 </body>
 </html>
