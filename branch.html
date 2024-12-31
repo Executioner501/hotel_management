@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Chefs</title>
+    <title>Manage Branch</title>
     <link rel="stylesheet" href="chefcss.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
 </head>
 <body>
     <header>
         <h1>Manage Branch</h1>
         <div class="hbar">
-        <a href="index.html">Home </a>
+            <a href="index.html">Home </a>
         </div>
     </header>
     
@@ -43,29 +42,49 @@
     <section>
         <h2>Assign Chef to Branch</h2>
         <form id="assign-chef-form">
-            <label for="chef-ssn">SSN:</label>
-            <input type="text" id="chef-ssn" name="ssn" required><br>
-    
-            <label for="branch-dropdown">Select Branch:</label>
-            <select id="branch-dropdown" name="branch_id">
-                <option value="">-- Select Branch --</option>
+            <label for="assignment-id">Assignment ID:</label>
+            <input type="text" id="assignment-id" placeholder="Assignment ID" required><br>
+        
+            <label for="chef-ssn">Chef SSN:</label>
+            <input type="text" id="chef-ssn" placeholder="Chef SSN" required><br>
+        
+            <label for="branch-dropdown1">Branch:</label>
+            <select id="branch-dropdown1" required>
                 <option value="1">Luxury Stay</option>
                 <option value="2">Cozy Retreat</option>
                 <option value="3">Urban Comfort</option>
             </select><br>
-    
-            <button type="submit" id="assign-chef-btn">Assign Chef</button>
+        
+            <label for="start-date">Start Date:</label>
+            <input type="date" id="start-date" required><br>
+        
+            <button type="submit">Assign Chef</button>
         </form>
-        <p id="assign-chef-message"></p> <!-- Display success or error message -->
+        
+        <div id="assign-chef-message"></div>
     </section>
+    
+    <section>
+        <h2>Branch Financial Records</h2>
+        <label for="branch-dropdown2">Select Branch:</label>
+        <select id="branch-dropdown2">
+            <option value="">-- Select Branch --</option>
+            <option value="1">Luxury Stay</option>
+            <option value="2">Cozy Retreat</option>
+            <option value="3">Urban Comfort</option>
+        </select>
+        <button id="view-financial-btn">View Financial Records</button>
+    
+        <div id="financial-records">
+            <!-- Financial records will be dynamically populated here -->
+        </div>
+    </section>
+    
     <script>
         document.getElementById('view-chefs-btn').addEventListener('click', fetchChefs);
 
         function fetchChefs() {
-            // Get the selected branch ID
             const branchId = document.getElementById('branch-dropdown').value;
-
-            // Fetch the data from the server
             fetch(`http://127.0.0.1:5000/get-chefs?branch_id=${branchId}`)
                 .then(response => response.json())
                 .then(data => {
@@ -83,50 +102,100 @@
                 })
                 .catch(error => console.error('Error:', error));
         }
+
         document.getElementById('view-unassigned-chefs-btn').addEventListener('click', fetchUnassignedChefs);
 
-function fetchUnassignedChefs() {
-    fetch('http://127.0.0.1:5000/get-all-chefs')
-        .then(response => response.json())
-        .then(data => {
-            let output = "<table border='1'><tr><th>SSN</th><th>Name</th><th>Join Date</th><th>Specialty Cuisine</th></tr>";
-            data.forEach(chef => {
-                output += `<tr>
-                    <td>${chef.ssn}</td>
-                    <td>${chef.name}</td>
-                    <td>${chef.join_date}</td>
-                    <td>${chef.specialty_cuisine}</td>
-                </tr>`;
+        function fetchUnassignedChefs() {
+            fetch('http://127.0.0.1:5000/get-all-chefs')
+                .then(response => response.json())
+                .then(data => {
+                    let output = "<table border='1'><tr><th>SSN</th><th>Name</th><th>Join Date</th><th>Specialty Cuisine</th></tr>";
+                    data.forEach(chef => {
+                        output += `<tr>
+                            <td>${chef.ssn}</td>
+                            <td>${chef.name}</td>
+                            <td>${chef.join_date}</td>
+                            <td>${chef.specialty_cuisine}</td>
+                        </tr>`;
+                    });
+                    output += "</table>";
+                    document.getElementById("unassigned-chef-table").innerHTML = output;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        document.getElementById('assign-chef-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const assignmentId = document.getElementById('assignment-id').value;
+            const chefSsn = document.getElementById('chef-ssn').value;
+            const selectedBranchId = document.getElementById('branch-dropdown1').value;
+            const startDate = document.getElementById('start-date').value;
+
+            fetch('http://127.0.0.1:5000/assign-chef', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    assignment_id: assignmentId, 
+                    chef_ssn: chefSsn, 
+                    branch_id: selectedBranchId, 
+                    start_date: startDate
+                })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error("Failed to assign chef");
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById('assign-chef-message').textContent = data.message || "Chef assigned successfully!";
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('assign-chef-message').textContent = 'Error assigning chef.';
             });
-            output += "</table>";
-            document.getElementById("unassigned-chef-table").innerHTML = output;
-        })
-        .catch(error => console.error('Error:', error));
-}
-document.getElementById('assign-chef-form').addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        const ssn = document.getElementById('chef-ssn').value;
-        const branchId = document.getElementById('branch-dropdown').value;
-
-        fetch('http://127.0.0.1:5000/assign-chef', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ssn, branch_id: branchId })
-        })
-        .then(response => {
-            if (!response.ok) throw new Error("Failed to assign chef");
-            return response.json();
-        })
-        .then(data => {
-            document.getElementById('assign-chef-message').textContent = data.message || "Chef assigned successfully!";
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            document.getElementById('assign-chef-message').textContent = 'Error assigning chef.';
         });
-    });
+
+       
+       // Event listener for View Financials button
+       document.getElementById('view-financial-btn').addEventListener('click', fetchBranchFinancials);
+
+function fetchBranchFinancials() {
+    const b_fin = document.getElementById('branch-dropdown2').value;
+
+    if (b_fin) {
+        fetch(`http://127.0.0.1:5000/get-branch-financials?b_fin=${b_fin}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();  // Parsing JSON response
+            })
+            .then(data => {
+                let output = "<table border='1'><tr><th>Date</th><th>Income</th><th>Expenses</th><th>Net Profit</th><th>Performance Notes</th></tr>";
+                data.forEach(record => {
+                    output += `<tr>
+                        <td>${record.record_date}</td>
+                        <td>${record.actual_revenue}</td>
+                        <td>${record.actual_expenditure}</td>
+                        <td>${record.actual_revenue - record.actual_expenditure}</td>
+                        <td>${record.performance_notes}</td>
+                    </tr>`;
+                });
+                output += "</table>";
+                document.getElementById("financial-records").innerHTML = output;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById("financial-records").innerHTML = "<p>Error fetching financial records.</p>";
+            });
+    } else {
+        alert('Please select a branch.');
+    }
+}
+
+
 
 
     </script>
-</body></html>
+</body>
+</html>

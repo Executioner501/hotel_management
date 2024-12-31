@@ -1,26 +1,173 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zenith Hotels</title>
-    <script src="script.js"></script>
     <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #fff;
+            background: url('https://source.unsplash.com/1920x1080/?luxury,hotel') no-repeat center center/cover;
+        }
+
+        /* Header Styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            animation: fadeInDown 1s ease-in-out;
+        }
+
+        .logo span {
+            color: #ff6347;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            display: flex;
+            gap: 40px;
+        }
+
+        .navbar a {
+            text-decoration: none;
+            color: white;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .navbar a:hover {
+            color: #ff6347;
+            transform: scale(1.2);
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .hero h1 {
+            font-size: 64px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            animation: fadeInUp 1.5s ease-in-out;
+        }
+
+        .hero p {
+            font-size: 20px;
+            max-width: 700px;
+            margin: 0 auto;
+            animation: fadeInUp 2s ease-in-out;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            color: white;
+            text-decoration: none;
+            background: linear-gradient(45deg, #ff6347, #ff4500);
+            border-radius: 25px;
+            font-size: 18px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: scale(1.1);
+            background: linear-gradient(45deg, #ff4500, #ff6347);
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .hero h1 {
+                font-size: 48px;
+            }
+
+            .hero p {
+                font-size: 18px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- <button onclick="fetchChefs()">Click to Get Chef List</button>
-    <div id="chef-list"></div>
-    
-    <button onclick="getBranch()">Click to Get Branch List</button>
-    <div id="branch-list"></div> -->
     <header class="header">
         <a href="#" class="logo"><span>Ze</span>nith</a>
         <nav class="navbar"> 
             <a href="#home">Home</a>
             <a href="chef.html">Chefs</a> 
             <a href="branch.html">Branches</a>
-            <a href="#menu">Menu</a>
-    </nav>
+            <a href="menu.html">Menu</a>
+        </nav>
     </header>
-    
-    </section>       
+
+    <section class="hero" id="home">
+        <h1>Welcome to Zenith Hotels</h1>
+        <p>Experience luxury and comfort like never before. Discover our exclusive chefs, relaxing branches, and gourmet menus.</p>
+        <a href="menu.html" class="btn">Explore Our Menu</a>
+    </section>
 </body>
 </html>

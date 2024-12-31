@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="chefcss.css">
+    <title>Manage Menu</title>
+    <script>
+        function fetchMenu() {
+            const branchId = document.getElementById('branch-dropdown').value;
+    
+            fetch(`http://127.0.0.1:5000/branch-menu?branch_id=${branchId}`)
+                .then(response => response.json())
+                .then(data => {
+                    let output = '';
+                    for (const [menuName, dishes] of Object.entries(data)) {
+                        output += `<h3>${menuName}</h3><ul>`;
+                        dishes.forEach(dish => {
+                            const price = parseFloat(dish.price); // Ensure price is a number
+                            output += `<li>${dish.name} - $${price.toFixed(2)}</li>`;
+                        });
+                        output += '</ul>';
+                    }
+                    document.getElementById("menu-list").innerHTML = output;
+                })
+                .catch(error => console.error('Error fetching menu:', error));
+        }
+    </script>
+    
+</head>
+<body>
+    <header>
+        <h1>Manage Branch</h1>
+        <div class="hbar">
+        <a href="index.html">Home </a>
+        </div>
+    </header>
+
+    <div>
+        <label for="branch-dropdown">Select Branch:</label>
+        <select id="branch-dropdown">
+            <!-- Your branch options -->
+            <option value="">Select Branch</option>
+            <option value="1">Luxury Stay</option>
+            <option value="2">Cozy Retreat</option>
+            <option value="3">Urban Comfort</option>
+        </select>
+        <button onclick="fetchMenu()">View Menu</button>
+    </div>
+
+    <div id="menu-list">
+        <!-- Menu items will be displayed here -->
+    </div>
+</body>
+</html>
