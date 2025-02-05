@@ -50,7 +50,7 @@ def get_chefs():
         return jsonify({"error": str(e)}), 500
     finally:
         
-            cursor.close()  # Ensure cursor is closed properly
+            cursor.close()  
 
 @app.route('/get-all-chefs', methods=['GET'])
 def get_all_chefs():
@@ -124,7 +124,6 @@ def assign_chef():
 
         cursor = conn.cursor()
         
-        # Insert into CHEF_ASSIGNMENT
         sql_query = """
             INSERT INTO CHEF_ASSIGNMENT (assignment_id, branch_id, chef_ssn, start_date, end_date)
             VALUES (%s, %s, %s, %s, %s)
@@ -137,13 +136,13 @@ def assign_chef():
         print(f"Error in assign_chef: {e}")
         return jsonify({"error": str(e)}), 500
     finally:
-        if cursor:  # Ensure cursor exists before closing
+        if cursor:
             cursor.close()
 
 
 @app.route('/branch-menu', methods=['GET'])
 def branch_menu():
-    branch_id = request.args.get('branch_id')  # Correct parameter name here
+    branch_id = request.args.get('branch_id')
     if not branch_id:
         return jsonify({"error": "Branch ID is required"}), 400
     
@@ -162,7 +161,7 @@ def branch_menu():
         for menu_name, dish_name, price in rows:
             if menu_name not in menus:
                 menus[menu_name] = []
-            menus[menu_name].append({"name": dish_name, "price": price})  # Keep price as numeric
+            menus[menu_name].append({"name": dish_name, "price": price})
         return jsonify(menus)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -172,7 +171,7 @@ def branch_menu():
 @app.route('/get-branch-financials', methods=['GET'])
 def get_branch_financials():
     try:
-        b_fi = request.args.get('b_fin')  # 'b_fin' for branch financials
+        b_fi = request.args.get('b_fin')
 
         if not b_fi:
             return jsonify({"error": "Branch ID is required"}), 400
